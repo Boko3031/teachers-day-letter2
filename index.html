@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Багш нарын баярын мэнд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Caveat:wght@500;700&family=Nunito:wght@400;700;800&family=Fira+Code:wght@500&display=swap">
+<style>
+/* Layout: two full-screen "pages" that slide like a storybook; page 1 = photo hero, page 2 = letters centered on notebook paper */
+:root{
+  --paper:#fff8ee; --ink:#2b2a4a; --soft:#6d6a8f;
+  --pink:#ff8fb1; --mint:#7fd8be; --sky:#8ec5ff; --sun:#ffd166; --grape:#b49cff;
+  --line:#e7dcf5;
+  --f-display:"Comfortaa","Nunito",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-code:"Fira Code",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{margin:0}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);overflow:hidden;
+  background-image:radial-gradient(var(--line) 1.4px,transparent 1.6px);background-size:22px 22px}
+.book{position:relative;height:100%;width:100%;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;padding-inline:16px;padding-block:28px 110px;
+  transition:transform .7s cubic-bezier(.7,0,.25,1),opacity .7s;display:flex;flex-direction:column;align-items:center}
+.page.p2{transform:translateX(100%);opacity:0}
+.book.flipped .p1{transform:translateX(-40%);opacity:0;pointer-events:none}
+.book.flipped .p2{transform:none;opacity:1}
+.book:not(.flipped) .p2{pointer-events:none}
+
+/* Page 1 */
+.code-tag{font-family:var(--f-code);font-size:.85rem;color:var(--soft);background:#fff;border:2px dashed var(--grape);
+  padding:.35rem .8rem;border-radius:10px}
+.code-tag b{color:#d0457a;font-weight:500}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,6vw,3.6rem);margin:.6rem 0 .2rem;text-align:center;text-wrap:balance;line-height:1.1}
+h1 .hl{background:linear-gradient(transparent 60%,var(--sun) 60%);padding:0 .15em}
+.sub{font-family:var(--f-hand);font-size:clamp(1.5rem,4vw,2.1rem);color:#d0457a;margin:0 0 1rem;text-align:center}
+.stage{position:relative;width:min(340px,78vw);aspect-ratio:1;max-width:100%;margin-block:1rem}
+.photo{position:absolute;inset:12%;border-radius:50%;background:#fff;border:8px solid #fff;
+  box-shadow:0 0 0 6px var(--pink),0 18px 40px rgba(43,42,74,.18);overflow:hidden;cursor:pointer;
+  display:grid;place-items:center;text-align:center;color:var(--soft);font-size:.9rem}
+.photo:focus-visible{outline:4px solid var(--sky);outline-offset:8px}
+.photo img{width:100%;height:100%;object-fit:cover}
+.photo .ph{padding:1rem;display:grid;gap:.4rem;justify-items:center}
+.photo .ph span{font-size:2.6rem}
+.ic{position:absolute;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;
+  box-shadow:0 6px 14px rgba(43,42,74,.12);animation:bob 3.2s ease-in-out infinite}
+.ic.code{font-family:var(--f-code);font-size:1.05rem;font-weight:500;color:var(--ink)}
+.i1{top:0;left:4%;background:var(--sun);animation-delay:0s}
+.i2{top:2%;right:2%;background:var(--mint);animation-delay:.5s}
+.i3{bottom:6%;left:-2%;background:var(--sky);animation-delay:1s}
+.i4{bottom:0;right:4%;background:var(--grape);animation-delay:1.5s}
+.i5{top:42%;left:-9%;background:var(--pink);width:42px;height:42px;font-size:1.2rem;animation-delay:.8s}
+.i6{top:40%;right:-9%;background:var(--sun);width:42px;height:42px;font-size:1.2rem;animation-delay:2s}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-5deg)}}
+.from{font-size:1rem;color:var(--soft);text-align:center;max-width:34ch}
+.from strong{color:var(--ink)}
+
+/* Nav buttons */
+.nav{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:5;font-family:var(--f-display);font-weight:700;
+  font-size:1rem;border:0;border-radius:999px;padding:.85rem 1.3rem;cursor:pointer;color:var(--ink);
+  box-shadow:0 5px 0 var(--ink);transition:transform .15s,box-shadow .15s;display:flex;align-items:center;gap:.5rem}
+.nav:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--ink)}
+.nav:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.nav:focus-visible{outline:3px solid var(--sky);outline-offset:4px}
+.next{right:20px;background:var(--mint)}
+.next .arr{display:inline-block;animation:nudge 1.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(5px)}}
+.back{left:20px;background:var(--sun)}
+
+/* Page 2 */
+h2{font-family:var(--f-display);font-size:clamp(1.6rem,5vw,2.5rem);margin:.3rem 0 .2rem;text-align:center}
+.hint{font-size:.85rem;color:var(--soft);margin:0 0 1.4rem;text-align:center}
+.letters{display:flex;flex-direction:column;gap:28px;width:100%;max-width:620px;align-items:center}
+.letter{position:relative;width:100%;background:#fff;border-radius:6px;padding:2rem 1.4rem 1.4rem;
+  box-shadow:0 10px 24px rgba(43,42,74,.10);text-align:center;
+  background-image:repeating-linear-gradient(#fff 0 35px,var(--line) 35px 36px);background-position:0 18px}
+.letter:nth-child(odd){transform:rotate(-1deg)}
+.letter:nth-child(even){transform:rotate(1deg)}
+.letter::before{content:"";position:absolute;top:-12px;left:50%;width:90px;height:24px;transform:translateX(-50%) rotate(-3deg);
+  background:var(--tape);opacity:.85;border-radius:3px}
+.letter .txt{font-family:var(--f-hand);font-size:1.6rem;line-height:36px;margin:0 auto;max-width:40ch;white-space:pre-line;outline:none}
+.letter .sig{font-family:var(--f-hand);font-size:1.5rem;font-weight:700;color:#d0457a;margin-top:.6rem;outline:none}
+.letter [contenteditable]:focus{background:rgba(255,209,102,.25);border-radius:6px}
+.letter .stk{position:absolute;bottom:10px;right:14px;font-size:1.6rem;transform:rotate(12deg)}
+.add{font-family:var(--f-display);font-weight:700;background:#fff;color:var(--ink);border:2px dashed var(--grape);
+  border-radius:14px;padding:.8rem 1.2rem;cursor:pointer}
+.add:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.end{font-family:var(--f-code);font-size:.85rem;color:var(--soft);margin-top:1.4rem}
+
+@media (max-width:480px){.nav{font-size:.92rem;padding:.75rem 1.05rem}.next{right:16px}.back{left:16px}.ic{width:44px;height:44px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="book" id="book">
+  <!-- PAGE 1: intro -->
+  <section class="page p1" aria-label="Introduction">
+    <div class="code-tag">print(<b>"Баярлалаа, багшаа!"</b>)</div>
+    <h1>Багш нарын <span class="hl">баярын мэнд!</span></h1>
+    <p class="sub">Таны шавь нараас ♡</p>
+
+    <div class="stage">
+      <div class="ic i1" aria-hidden="true">⭐</div>
+      <div class="ic i2 code" aria-hidden="true">&lt;/&gt;</div>
+      <div class="ic i3" aria-hidden="true">🎓</div>
+      <div class="ic i4" aria-hidden="true">🚀</div>
+      <div class="ic i5 code" aria-hidden="true">{ }</div>
+      <div class="ic i6" aria-hidden="true">💖</div>
+      <div class="photo"><img src="teacher.jpg" alt="Манай багш"></div>
+    </div>
+
+    <p class="from">Таны <strong>бүх шавь нараас</strong> хайр, талархалтайгаар.</p>
+  </section>
+
+  <!-- PAGE 2: letters -->
+  <section class="page p2" aria-label="Letters">
+    <h2>Бидний захиа 💌</h2>
+    <p class="hint">Текст дээр дарж засаж болно</p>
+    <div class="letters" id="letters"></div>
+    <button class="add" id="add" type="button">+ Захиа нэмэх</button>
+    <div class="end">while(true) { thankYou('Оюу багш'); }</div>
+  </section>
+
+  <button class="nav next" id="next" type="button">Next page <span class="arr">→</span></button>
+  <button class="nav back" id="back" type="button" hidden>← Back</button>
+</div>
+
+<script>
+const letters=[
+  {t:"Хайрт Оюу багшдаа багш нарын баярын мэнд хүргэе!\n\nТаны ачаар би одооноос юу хийх ёстойгоо ойлгосон. Таны эелдэг, тодорхой байдал тань үнэхээр үлгэр дууриал болдог юм шиг санагддаг шүү. Таны хэлсэн зөвлөгөө болгон үнэ цэнтэй байдаг.\n\nЗөндөө их хайртай шүү, багшаа!",n:"Хулангаас",s:"💛",c:"#ffd166"},
+  {t:"Happy Teachers' Day! 🤍\n\nWhen I first started learning about college applications, I honestly had no idea where to begin. Thank you so much for teaching me everything from the very beginning and patiently explaining things whenever I felt confused or lost. Your guidance and encouragement have meant so much to me.\n\nI can really see how much effort and heart you put into teaching and helping us. Thank you for always being so patient, supportive, and genuinely caring about your students.\n\nI'm really grateful that I got to learn from you. Wishing you lots of happiness, good health, and success! 💕💕💕",n:"Bolormaa",s:"🌸",c:"#ff8fb1"},
+  {t:"Хүндэт Оюу-Эрдэнэ 🩷 багшид,\n\nАнх орж ирэхэд SAT, IELTS-ийг сайн мэдэхгүй, мэдлэг тутмаг байсан намайг бүрэн гүйцэд, зөвөөр зааж зөвлөж байсанд тань баярлалаа. Анх орж ирэхэд надад нэг л боломжгүй, чадахгүй юм шиг санагдаад нэлээд хэцүүхэн байсан шүү, хэхэ.\n\nУурлуулж гомдоож байсан бол уучлаарай, багшаа. Та минь бид нартаа зөндөө их сэтгэл гаргадаг шүү 🫶🏻🫶🏻\n\nТа минь өнөөдөр гоё өдрийг өнгөрүүлээрэй 🩷",n:"Pinecone-ын сурагч Э.Оюундариас",s:"🌷",c:"#7fd8be"},
+  {t:"Оюу багшдаа багш нарын баярын мэнд!\n\nХичээл бүрээрээ бидэнд зааж чиглүүлж, өөрийн сэтгэлээр зөвлөгөө өгдөгт тань маш их баярлалаа. Багшийнхаа заасан болгоноос маш их зүйл сурч, суралцсаар байгаа шүү.\n\nБагш тандаа болон таны гэр бүлд эрүүл энх, сайн сайхан бүхнийг хүсье. Ажлын их үйлсэд тань өндөр амжилт хүсье.",n:"Таны шавь Эрхэс",s:"🌟",c:"#8ec5ff"},
+  {t:"Happy Teachers' Day to Oyu teacher!\n\nI want to thank you for giving me the courage and confidence to face this difficult challenge. Your acknowledgement that I am unique from my classmates in some way is the reason I was able to keep going and rise from failures.\n\nI wish you the best.",n:"Khuslen",s:"🎓",c:"#b49cff"},
+  {t:"Сайн уу, багшаа! Багш нарын баярын мэнд хүргэе!\n\nТа хичээлээ үнэхээр гоё заадаг шүү!",n:"Бархасаас",s:"🚀",c:"#ffd166"}
+];
+const box=document.getElementById('letters');
+const stickers=["⭐","💻","🎉","🌈","🐱","🍀"],tapes=["#ffd166","#ff8fb1","#7fd8be","#8ec5ff","#b49cff"];
+function addLetter(l){
+  const d=document.createElement('article');d.className='letter';d.style.setProperty('--tape',l.c);
+  d.innerHTML='<p class="txt" contenteditable="true" spellcheck="false"></p><div class="sig" contenteditable="true" spellcheck="false"></div><span class="stk" aria-hidden="true"></span>';
+  d.querySelector('.txt').textContent=l.t;d.querySelector('.sig').textContent='— '+l.n;d.querySelector('.stk').textContent=l.s;
+  box.appendChild(d);return d;
+}
+letters.forEach(addLetter);
+document.getElementById('add').onclick=()=>{
+  const i=box.children.length;
+  const d=addLetter({t:"Энд захиагаа бичнэ үү…",n:"Нэр",s:stickers[i%stickers.length],c:tapes[i%tapes.length]});
+  d.scrollIntoView({behavior:'smooth',block:'center'});const t=d.querySelector('.txt');t.focus();
+  const r=document.createRange();r.selectNodeContents(t);const s=getSelection();s.removeAllRanges();s.addRange(r);
+};
+
+const book=document.getElementById('book'),next=document.getElementById('next'),back=document.getElementById('back');
+function go(p2){book.classList.toggle('flipped',p2);next.hidden=p2;back.hidden=!p2;
+  document.querySelector(p2?'.p2':'.p1').scrollTop=0;(p2?back:next).focus({preventScroll:true});}
+next.onclick=()=>go(true);back.onclick=()=>go(false);
+document.addEventListener('keydown',e=>{if(e.target.isContentEditable)return;if(e.key==='ArrowRight')go(true);if(e.key==='ArrowLeft')go(false);});
+
+</script>
+</body>
+</html>
